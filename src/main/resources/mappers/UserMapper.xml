@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" 
+	"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="cn.tedu.store.mapper.UserMapper">
+	
+	<!-- 增加用户数据 -->
+	<!-- Integer insert(User user) -->
+	<!-- useGeneratedKeys="true" 和  keyProperty="id" 这两个属性是为了获取自增加数据的id -->
+	<!-- keyProperty中的id是实体类中属性值 -->
+	<insert id="insert" parameterType="cn.tedu.store.entity.User" useGeneratedKeys="true" keyProperty="id">
+		insert into t_user (username,password,gender,phone,email,avatar,uuid, create_user,createt_time,modified_user,modified_time)
+		values (#{username},#{password},#{gender},#{phone},#{email},#{avatar},#{uuid},#{createdUser},#{createtedTime},#{modifiedUser},#{modifiedTime})
+	</insert>
+	
+	<!-- 修改密码 -->
+	<!-- Integer changePassword(@Param("uid")Integer uid,@Param("password")String password); -->
+	<update id="changePassword" parameterType="cn.tedu.store.entity.User">
+		update t_user set password=#{password} modified_user=#{modifiedUser}, modified_time=#{modifiedTime} where id=#{uid}
+	</update>
+	
+	<!-- 依据id查询数据 -->
+	<!-- User findUserById(Integer id) -->
+	<!-- resultType用于查询操作必须配置属性 -->
+	<select id="findUserById" resultType="cn.tedu.store.entity.User">
+		select id,username,password,gender,phone,email,avatar,uuid, 
+		create_user as createUser,createt_time as createtTime,modified_user as modifiedUser,modified_time as modifiedTime
+		 from t_user where id=#{id}
+	</select>
+	
+	<!-- 依据用户名查询数据 -->
+	<!-- User findUserByUsernaem(Integer id) -->
+	<!-- resultType用于查询操作必须配置属性 -->
+	<select id="findUserByUsername" resultType="cn.tedu.store.entity.User">
+		select id,username,password,gender,phone,email,avatar,uuid, 
+		create_user as createUser,createt_time as createtTime,modified_user as modifiedUser,modified_time as modifiedTime
+		 from t_user where username=#{username}
+	</select>
+	
+	<!-- 修改用户个人信息 -->
+	<!-- Integer changeInfo(User user) -->
+	<update id="changeInfo" parameterType="cn.tedu.store.entity.User">
+		update t_user set 
+		<if test="username!=null"> username=#{username},</if>
+		<if test="gender!=null"> gender=#{gender},</if>
+		<if test="phone!=null"> phone=#{phone},</if>
+		<if test="email!=null"> email=#{email},</if>
+		<if test="avatar!=null"> avatar=#{avatar},</if>
+		modified_user=#{modifiedUser}, modified_time=#{modifiedTime}
+		where id=#{id}
+	</update>
+	
+	<!-- 删除一条数据 -->
+	<!-- Integer delete(Integer id) -->
+	<delete id="delete" >
+	delete from t_user where id=#{id}
+	</delete>
+	
+	<!-- 删除多条数据 -->
+	<!-- Integer deleteX(List<Integer> ids) -->
+	<delete id="deleteX">
+		delete from t_user	where id in
+		<!-- collection 当一个传入一个参数时,遍历集合类型为list或array -->
+		<!-- collection 当一个传入多个参数时,值为参数名称-->
+		<!-- item 遍历集合别名 separator每个元素的分隔符 -->
+		<foreach collection="list" item="id" separator="," open="(" close=")" >
+			#{id}
+		</foreach>
+	</delete>
+	
+	<!-- 查询所有数据 -->
+	<!-- List<User> getUserList() -->
+	<select id="getUserList" resultType="cn.tedu.store.entity.User">
+		select id,username,password,age,email from t_user
+	</select>
+	
+	<!-- 分页查询数据 -->
+	<!-- List<User> getLimitedUser(@Param("offset")Integer offset, @Param("count")Integer count) -->
+	<select id="getLimitedUser" resultType="cn.tedu.store.entity.User">
+		select id,username,password,age,email from t_user limit #{offset},#{count}
+	</select>
+</mapper>
